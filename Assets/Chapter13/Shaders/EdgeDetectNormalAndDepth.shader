@@ -69,6 +69,8 @@
 		}
 		
 		fixed4 fragRobertsCrossDepthAndNormal(v2f i) : SV_Target {
+
+			//使用4个纹理坐标对深度和法线纹理采样
 			half4 sample1 = tex2D(_CameraDepthNormalsTexture, i.uv[1]);
 			half4 sample2 = tex2D(_CameraDepthNormalsTexture, i.uv[2]);
 			half4 sample3 = tex2D(_CameraDepthNormalsTexture, i.uv[3]);
