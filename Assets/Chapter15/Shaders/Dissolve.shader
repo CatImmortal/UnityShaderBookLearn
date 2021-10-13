@@ -74,20 +74,22 @@
 			}
 			
 			fixed4 frag(v2f i) : SV_Target {
+
+				//对噪声纹理采样 并根据阈值clip
 				fixed3 burn = tex2D(_BurnMap, i.uvBurnMap).rgb;
-				
 				clip(burn.r - _BurnAmount);
 				
+				//光照计算
 				float3 tangentLightDir = normalize(i.lightDir);
 				fixed3 tangentNormal = UnpackNormal(tex2D(_BumpMap, i.uvBumpMap));
-				
 				fixed3 albedo = tex2D(_MainTex, i.uvMainTex).rgb;
-				
 				fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz * albedo;
-				
 				fixed3 diffuse = _LightColor0.rgb * albedo * max(0, dot(tangentNormal, tangentLightDir));
 
+				//计算混合系数t 如果t为1，就表明此像素在消融的边界 如果t为0，就是正常像素颜色
 				fixed t = 1 - smoothstep(0.0, _LineWidth, burn.r - _BurnAmount);
+
+				//用t混合两种火焰颜色
 				fixed3 burnColor = lerp(_BurnFirstColor, _BurnSecondColor, t);
 				burnColor = pow(burnColor, 5);
 				
